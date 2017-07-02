@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FinRoute</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="hintTxtItem">Enter Complete Address</string>
+    <string name="lblBtnAdd">Add Item</string>
+    <string name="txtEmpty">List is empty</string>
+</resources>

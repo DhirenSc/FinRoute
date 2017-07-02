@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapsActivity"
+    android:orientation="vertical">
+
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Destinations"
+        android:onClick="findPlace"/>
+
+    <Button
+        android:id="@+id/btnDraw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Draw Route"
+        android:onClick="drawRoute"
+        />
+
+    <Button
+        android:id="@+id/btnGo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lets Go"
+        android:onClick="onGo"/>
+
+</LinearLayout>
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:map="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:id="@+id/map" tools:context=".MapsActivity"
+    android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+
+
+</LinearLayout>
