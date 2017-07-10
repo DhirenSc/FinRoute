@@ -3,6 +3,7 @@ package com.example.dhirensc.finroute;
 /**
  * Created by dhirensc on 1/7/17.
  */
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import com.google.android.gms.maps.model.LatLng;
 
 public class DirectionsJSONParser {
+
 
     public static ArrayList<String> wayptList = new ArrayList<String>();
     /** Receives a JSONObject and returns a lidst of lists containing latitude and longitude */

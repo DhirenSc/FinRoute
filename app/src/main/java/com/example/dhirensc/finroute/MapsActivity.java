@@ -1,10 +1,15 @@
 package com.example.dhirensc.finroute;
+
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,34 +44,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GPSTracker gps;
     double longitude;
     double latitude;
-    LatLng latLng;
-    MarkerOptions markerOptions;
-    LatLng myLoc,markLoc;
-    public static String myLat,myLng;
+    LatLng myLoc, markLoc;
+    public static String myLat, myLng;
+    int latest = 0;
+    boolean tourstat;
+
+    public static final String status = "1";
 
     static ArrayList<String> finlist = new ArrayList<String>();
     static ArrayList<Double> finlat = new ArrayList<Double>();
     static ArrayList<Double> finlon = new ArrayList<Double>();
+
+    DatabaseHandler DBH = new DatabaseHandler(this);
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        latest = DBH.getLatestTour();
+        tourstat = DBH.getTourStatus(latest);
+        if(tourstat == true){
+            Intent i = new Intent(MapsActivity.this, GoActivity.class);
+            i.putExtra("Tour_Id", latest);
+            startActivity(i);
+        }
+
 
         try {
             gps = new GPSTracker(MapsActivity.this);
 
 
-            if(gps.canGetLocation()){
+            if (gps.canGetLocation()) {
 
 
                 longitude = gps.getLongitude();
-                latitude = gps .getLatitude();
-                Log.e(latitude+":",longitude+"");
-                }
-            else
-            {
+                latitude = gps.getLatitude();
+                Log.e(latitude + ":", longitude + "");
+            } else {
 
                 gps.showSettingsAlert();
             }
@@ -75,45 +90,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-//        Button btn_find = (Button) findViewById(R.id.BSearch);
-//
-//        View.OnClickListener findClickListener = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Getting reference to EditText to get the user input location
-//                EditText etLocation = (EditText) findViewById(R.id.TFaddress);
-//
-//                // Getting user input location
-//                String location = etLocation.getText().toString();
-//
-//                if(location!=null && !location.equals("")){
-//                    new GeocoderTask().execute(location);
-//                }
-//            }
-//        };
-//        btn_find.setOnClickListener(findClickListener);
-
-
-//        Button add_dest = findViewById(R.id.button3);
-//
-//        View.OnClickListener ClickListener = new View.OnClickListener() {
-//            public void onClick(View v) {
-//
-//                Intent i = new Intent(MapsActivity.this, DestinationsActivity.class);
-//                startActivity(i);
-//            }
-//
-//        };
-//        add_dest.setOnClickListener(ClickListener);
-
-
-
-        }
+    }
 
 
     @Override
@@ -124,8 +104,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Add a marker in and move the camera
         mMap.clear();
         myLoc = new LatLng(latitude, longitude);
-        myLat = myLoc.latitude+"";
-        myLng = myLoc.longitude+"";
+        myLat = myLoc.latitude + "";
+        myLng = myLoc.longitude + "";
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
         Marker markerMe = mMap.addMarker(new MarkerOptions().position(myLoc).title("I'm here..."));
         markerMe.setVisible(true);
         markerMe.showInfoWindow();
@@ -182,7 +173,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-        public void drawRoute(View v){
+    public void drawRoute(View v){
             String waypts="", origins=myLat + "," + myLng, destn="";
 
             for(int i=0; i<finlist.size();i++){
